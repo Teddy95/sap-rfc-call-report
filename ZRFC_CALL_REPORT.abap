@@ -1,13 +1,13 @@
-function zrfc_read_claims.
+function zrfc_call_report.
 *"----------------------------------------------------------------------
 *"*"Lokale Schnittstelle:
 *"  IMPORTING
 *"     VALUE(DELIMITER) TYPE  CHAR1
-*"     VALUE(STARTTIME) TYPE  SY-DATUM
-*"     VALUE(ENDTIME) TYPE  SY-DATUM
+*"     VALUE(REPORT) TYPE  CHAR25
 *"  TABLES
 *"      FIELDLIST STRUCTURE  TAB512
 *"      DATA STRUCTURE  TAB512
+*"      SELECTION STRUCTURE  RSPARAMS OPTIONAL
 *"----------------------------------------------------------------------
 
 *  Data declaration
@@ -23,8 +23,6 @@ function zrfc_read_claims.
 *  Define variables
   data: lr_pay_data     type ref to data,
         ls_data         like line of data,
-        lt_seltab       type table of rsparams,
-        ls_seltab       like line of lt_seltab,
         lt_fieldlist    type table of lty_fieldlist,
         ls_fieldlist    like line of lt_fieldlist,
         lt_table_csv    type truxs_t_text_data,
@@ -44,17 +42,13 @@ function zrfc_read_claims.
               metadata = abap_true
               data     = abap_true ).
 
-* Create selection-screen parameters
-  ls_seltab-selname = 'S_QMDAT'.
-  ls_seltab-kind    = 'S'.
-  ls_seltab-sign    = 'I'.
-  ls_seltab-option  = 'BT'.
-  ls_seltab-low     = starttime.
-  ls_seltab-high    = endtime.
-  append ls_seltab to lt_seltab.
-
-*  Call report with selection-screen parameters
-  submit zqmrktc_ausw_rekl with selection-table lt_seltab and return.
+*  Call report (with selection-screen parameters)
+  describe table selection lines data(lv_lines).
+  if lv_lines > 0.
+    submit (report) with selection-table selection and return.
+  else.
+    submit (report) and return.
+  endif.
 
 *  Try to get report alv metadata & data from ABAP runtime
   try.
