@@ -1,6 +1,6 @@
 # SAP Call Report Function Module
 
-Create a new function module in SE80 and name it `ZRFC_CALL_REPORT`. After this step you can exec an ALV based report in sap with node-rfc and pipe the alv output to Node.js.
+Create a new function module in SE80 and name it `ZRFC_CALL_REPORT`. After this step you can exec an ALV based report in sap with node-rfc and pipe ALV output to Node.js.
 
 ### Call SAP Report with Node.js
 
