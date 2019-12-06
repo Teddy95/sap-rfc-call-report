@@ -1,6 +1,26 @@
 # SAP Call Report Function Module
 
-Create a new function module in SE80 and name it `ZRFC_CALL_REPORT`. After this step you can exec an ALV based report in sap with node-rfc and pipe ALV output to Node.js.
+This project delivers a SAP rfc function module to call parameterized ALV based reports from other programming languages like Node.js or Python.
+Create a new function module in SE80 paste the code from `ZRFC_CALL_REPORT.abap` into it and name it `ZRFC_CALL_REPORT`. After this step you can exec an ALV based report in SAP with node-rfc and pipe ALV output to Node.js.
+
+### Function module parameters
+
+Importing:
+
+| Parameter | Type                        | Length | Required | Description                        |
+| --------- | --------------------------- | ------ | :------: | ---------------------------------- |
+| DELIMITER | Char                        | 1      | x        | Delimiter for data payload         |
+| REPORT    | Char                        | 25     | x        | Name of report you want to execute |
+| SELECTION | Array of Objects (RSPARAMS) |        |          | Selection screen parameters        |
+
+Exporting:
+
+| Parameter | Type                      | Description                       |
+| --------- | ------------------------- | --------------------------------- |
+| FIELDLIST | Array of Objects (TAB512) | Returning fieldlist of ALV output |
+| DATA      | Array of Objects (TAB512) | Returning data from ALV output    |
+| ERRORCODE | Int                       | Error code. 0 = successful        |
+| ERRORMSG  | String                    | Error message                     |
 
 ### Call SAP Report with Node.js
 
@@ -21,6 +41,23 @@ const abapSystem = {
 }
 
 const client = new rfcClient(abapSystem)
+
+const beautify = (data) => {
+	var response = []
+
+	data.DATA.forEach(record => {
+		const values = record.WA.split(data.DELIMITER)
+		var dataSet = {}
+
+		for (var i = 0; i < values.length; i++) {
+			dataSet[data.FIELDLIST[i].WA.split(data.DELIMITER)[0]] = values[i]
+		}
+
+		response.push(dataSet)
+	})
+
+	return response
+}
 
 const callReport = async () => {
 	try {
@@ -48,27 +85,21 @@ const callReport = async () => {
 
 		// Call Function Module 'ZRFC_CALL_REPORT'
 		var result = await client.call('ZRFC_CALL_REPORT', {
-			'DELIMITER': ';',
-			'REPORT': 'ZQMRKTC_AUSW_REKL',
-			'SELECTION': selection
+			'DELIMITER': ';',				// Delimiter for returned payload
+			'REPORT': 'ZQMRKTC_AUSW_REKL',	// Report name (in this example a custom report)
+			'SELECTION': selection			// Optional: Selection screen parameters
 		})
 
-		// Beautify report data (optional)
-		var response = []
+		// If there are no errors, transform result data & log it to console
+		if (result.ERRORCODE === 0) {
+			// Beautify report data (optional)
+			const response = beautify(result)
 
-		result.DATA.forEach(record => {
-			const values = record.WA.split(result.DELIMITER)
-			var dataSet = {}
-
-			for (var i = 0; i < values.length; i++) {
-				dataSet[result.FIELDLIST[i].WA.split(result.DELIMITER)[0]] = values[i]
-			}
-
-			response.push(dataSet)
-		})
-
-		// Print data to console
-		console.log(response)
+			// Print data to console
+			console.log(response)
+		} else {
+			console.log(result.ERRORMSG)
+		}
 	} catch (err) {
 		console.log(err)
 	}
