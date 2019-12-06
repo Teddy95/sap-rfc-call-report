@@ -3,6 +3,13 @@
 This project delivers a SAP rfc function module to call parameterized ALV based reports from other programming languages like Node.js or Python.
 Create a new function module in SE80 paste the code from `ZRFC_CALL_REPORT.abap` into it and name it `ZRFC_CALL_REPORT`. After this step you can exec an ALV based report in SAP with node-rfc and pipe ALV output to Node.js.
 
+### Requirements
+
+- SAP NetWeaver System
+- SAP Developer Account
+- Working installation of [SAP NW RFC SDK 7.50](https://support.sap.com/en/product/connectors/nwrfcsdk.html)
+- Working installation of [node-rfc](https://github.com/SAP/node-rfc) (if you are using Node.js)
+
 ### Function module parameters
 
 Importing:
