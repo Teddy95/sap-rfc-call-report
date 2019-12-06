@@ -4,11 +4,17 @@ function zrfc_call_report.
 *"  IMPORTING
 *"     VALUE(DELIMITER) TYPE  CHAR1
 *"     VALUE(REPORT) TYPE  CHAR25
+*"  EXPORTING
+*"     VALUE(ERRORCODE) TYPE  I
+*"     VALUE(ERRORMSG) TYPE  STRING
 *"  TABLES
 *"      FIELDLIST STRUCTURE  TAB512
 *"      DATA STRUCTURE  TAB512
 *"      SELECTION STRUCTURE  RSPARAMS OPTIONAL
 *"----------------------------------------------------------------------
+
+* Author: Andre Sieverding
+* Date: 05.12.2019
 
 *  Data declaration
 *  Define fildlist structure type -> Table of this structure are going to be converted to csv data and moved to FIELDLIST table
@@ -35,6 +41,10 @@ function zrfc_call_report.
   field-symbols: <lt_pay_data> type standard table,
                  <lf_column>   like line of lt_columns.
 
+*  Clear tables
+  refresh: fieldlist, data.
+  free: fieldlist, data.
+
 *  Prompt SAP to use alv data from ABAP runtime
 *  We need metadata & data
   cl_salv_bs_runtime_info=>set(
@@ -57,7 +67,12 @@ function zrfc_call_report.
         importing r_data = lr_pay_data ).
       assign lr_pay_data->* to <lt_pay_data>.
     catch cx_salv_bs_sc_runtime_info.
-      message `Unable to retrieve ALV data` type 'E'.
+*      Error
+      refresh: fieldlist, data.
+      free: fieldlist, data.
+      errorcode = 1.
+      errormsg = 'Cannot get ALV data from ABAP runtime!'.
+      return.
   endtry.
 
   cl_salv_bs_runtime_info=>clear_all( ).
@@ -100,7 +115,12 @@ function zrfc_call_report.
       conversion_failed    = 1
       others               = 2.
   if sy-subrc <> 0.
-* Error
+*    Error
+    refresh: fieldlist, data.
+    free: fieldlist, data.
+    errorcode = 2.
+    errormsg = 'Fieldlist payload to csv conversion has failed!'.
+    return.
   endif.
 
 *  Loop through csv records and add them to the FIELDLIST table
@@ -123,7 +143,12 @@ function zrfc_call_report.
       conversion_failed    = 1
       others               = 2.
   if sy-subrc <> 0.
-* Error
+*    Error
+    refresh: fieldlist, data.
+    free: fieldlist, data.
+    errorcode = 2.
+    errormsg = 'Data payload to csv conversion has failed!'.
+    return.
   endif.
 
 *  Loop through csv records and add them to the DATA table
@@ -131,4 +156,8 @@ function zrfc_call_report.
     ls_data-wa = <row>.
     insert ls_data into table data.
   endloop.
+
+*  Set error code exporting parameter to 0 & clear error message
+  errorcode = 0.
+  clear: errormsg.
 endfunction.
