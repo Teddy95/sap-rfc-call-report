@@ -124,8 +124,8 @@ function zrfc_call_report.
   endif.
 
 *  Loop through csv records and add them to the FIELDLIST table
-  loop at lt_table_csv assigning field-symbol(<f2>).
-    ls_data-wa = <f2>.
+  loop at lt_table_csv assigning field-symbol(<f>).
+    ls_data-wa = <f>.
     insert ls_data into table fieldlist.
   endloop.
 
