@@ -14,11 +14,12 @@ Create a new function module in SE80 paste the code from `ZRFC_CALL_REPORT.abap`
 
 Importing:
 
-| Parameter | Type                        | Length | Required | Description                        |
-| --------- | --------------------------- | ------ | :------: | ---------------------------------- |
-| DELIMITER | Char                        | 1      | x        | Delimiter for data payload         |
-| REPORT    | Char                        | 25     | x        | Name of report you want to execute |
-| SELECTION | Array of Objects (RSPARAMS) |        |          | Selection screen parameters        |
+| Parameter | Type                        | Length | Required | Description                                      |
+| --------- | --------------------------- | ------ | :------: | ------------------------------------------------ |
+| DELIMITER | Char                        | 1      | x        | Delimiter for data payload                       |
+| REPORT    | Char                        | 25     | x        | Name of report you want to execute               |
+| NOOUTPUT  | Char                        | 1      |          | Set to `X` if you only want to submit the report |
+| SELECTION | Array of Objects (RSPARAMS) |        |          | Selection screen parameters                      |
 
 Exporting:
 
