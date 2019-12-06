@@ -4,6 +4,7 @@ function zrfc_call_report.
 *"  IMPORTING
 *"     VALUE(DELIMITER) TYPE  CHAR1
 *"     VALUE(REPORT) TYPE  CHAR25
+*"     VALUE(NOOUTPUT) TYPE  CHAR1 OPTIONAL
 *"  EXPORTING
 *"     VALUE(ERRORCODE) TYPE  I
 *"     VALUE(ERRORMSG) TYPE  STRING
@@ -58,6 +59,15 @@ function zrfc_call_report.
     submit (report) with selection-table selection and return.
   else.
     submit (report) and return.
+  endif.
+
+*  If import parameter NOOUTPUT is set to 'X' leave program
+  if nooutput = 'X'.
+    refresh: fieldlist, data.
+    free: fieldlist, data.
+    clear: errormsg.
+    errorcode = 0.
+    return.
   endif.
 
 *  Try to get report alv metadata & data from ABAP runtime
