@@ -8,7 +8,22 @@ Create a new function module in SE80 paste the code from `ZRFC_CALL_REPORT.abap`
 
 <details>
 	<summary>Attributes settings (enable rfc)</summary>
-	![Enable RFC](/screenshots/enable_rfc.png)
+	<img src="/screenshots/enable_rfc.png" alt="Enable RFC" />
+</details>
+
+<details>
+	<summary>Import parameters</summary>
+	<img src="/screenshots/import_parameters.png" alt="Enable RFC" />
+</details>
+
+<details>
+	<summary>Export parameters</summary>
+	<img src="/screenshots/export_parameters.png" alt="Enable RFC" />
+</details>
+
+<details>
+	<summary>Tables parameters</summary>
+	<img src="/screenshots/tables_parameters.png" alt="Enable RFC" />
 </details>
 
 ### Requirements
