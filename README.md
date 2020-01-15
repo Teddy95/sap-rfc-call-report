@@ -1,4 +1,4 @@
-# SAP Call Report Function Module
+# SAP Call Report Function Module ⚗️
 
 This project delivers a SAP rfc function module to call parameterized ALV based reports from other programming languages like Node.js or Python.
 Create a new function module in SE80 paste the code from `ZRFC_CALL_REPORT.abap` into it and name it `ZRFC_CALL_REPORT`. After this step you can exec an ALV based report in SAP with node-rfc and pipe ALV output to Node.js.
